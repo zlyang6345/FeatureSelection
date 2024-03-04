@@ -15,11 +15,11 @@ class TestERFS(TestCase):
 
         # for test speed
         # only take 100
-        data = data.iloc[:100, :]
-        label = label.iloc[:100, :]
+        data = data.iloc[:1000 , :]
+        label = label.iloc[:1000, :]
 
         erfs = ERFS(data, label)
-        erfs.fit(0.01, 30, True, 0.001)
+        erfs.fit(0.01, 15, True, 0.01)
 
-        important_features = erfs.k_features(4)
+        important_features = erfs.k_features()
         assert len(important_features) == 4

@@ -16,7 +16,7 @@ class ERFS:
         [self.n, self.d] = X.shape
         self.c = Y.shape[1]
         self.m = self.n + self.d
-        Y = pd.get_dummies(Y.iloc[:, 0]).astype(int)
+        Y = pd.get_dummies(Y.iloc[:, 0].astype('category')).astype(int)
         self.features = X.columns
         X = np.array(X)
         Y = np.array(Y)

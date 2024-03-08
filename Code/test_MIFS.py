@@ -12,7 +12,8 @@ class TestMIFS(TestCase):
 
         # for test speed
         # only take 100
-        data = data.iloc[:1000, :]
-        label = label.iloc[:1000, :]
+        data = data.iloc[:100, :]
+        label = label.iloc[:100, :]
 
         mifs = MIFS(data, label)
+        mifs.fit(c=None)

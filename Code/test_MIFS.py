@@ -12,8 +12,13 @@ class TestMIFS(TestCase):
 
         # for test speed
         # only take 100
-        data = data.iloc[:100, :]
-        label = label.iloc[:100, :]
+        data = data.iloc[:2000, :]
+        # normalize each row
+        # Define a lambda function for min-max normalization
+        min_max_normalize = lambda x: (x - x.min()) / (x.max() - x.min())
+        # Apply the function to each row
+        normalized_data = data.apply(min_max_normalize, axis=1)
+        label = label.iloc[:2000, :]
 
-        mifs = MIFS(data, label)
+        mifs = MIFS(normalized_data, label)
         mifs.fit(c=None)

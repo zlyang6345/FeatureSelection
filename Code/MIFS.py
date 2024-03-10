@@ -14,6 +14,7 @@ class MIFS:
         :param p: an integer to represent the number of nearest neighbors.
         """
         [self.n, self.d] = data.shape
+        self.features = data.columns
         self.data = np.array(data)
         label = pd.get_dummies(label.iloc[:, 0].astype('category')).astype(int)
         self.k = label.shape[1]
@@ -49,7 +50,7 @@ class MIFS:
             alpha=0.4,
             beta=1,
             gamma=0.8,
-            epoch=10,
+            epoch=10000,
             sqrd_sigma=0.9,
             epislon=0.001,
             p=5):
@@ -62,6 +63,7 @@ class MIFS:
         S = np.zeros((self.n, self.n))
         for i in range(self.n):
             S[i, p_nearest_neighbors[i]] = kernal_distance_matrix[i, p_nearest_neighbors[i]]
+        S = np.sqrt(S * S.transpose()) # this step makes sure the affinity matrix is symmetric (i and j should treat each other as their nearest neighbors. Otherwise, should be 0.)
         Aii = np.sum(S, axis=1)
         A = np.diag(Aii)
         L = A - S
@@ -74,9 +76,9 @@ class MIFS:
             else:
                 # multiple label
                 c = int(2 * self.k / 3)
-        W = np.zeros((self.d, c))
-        V = np.zeros((self.n, c))
-        B = np.zeros((c, self.k))
+        W = np.random.rand(self.d, c)
+        V = np.random.rand(self.n, c)
+        B = np.random.rand(c, self.k)
         X = self.data
         Y = self.label
 
@@ -95,42 +97,41 @@ class MIFS:
             d_theta_d_V = 2 * ((V - X @ W) + alpha * (V @ B - Y) @ B.transpose() + beta * L @ V)
             d_theta_d_B = 2 * alpha * V.transpose() @ (V @ B - Y)
 
-            # use Armijo rule to determine stepsizes lambda for W, V, and B
+            # use the Armijo rule to determine a stepsize lambda for W, V, and B
             # then update W, V, B
-
+            lbd = 1e-4
             # search lambda_W
-            search_result = line_search(f=lambda w: self.theta(X, Y, L, w.reshape(W.shape[0], -1), V, B, alpha, beta, gamma),
-                                   myfprime=lambda w: (2 * (X.transpose() @ (X @ w.reshape(W.shape[0], -1) - V) + gamma * D @ w.reshape(W.shape[0], -1))).flatten(),
-                                   xk=W.flatten(),
-                                   pk=d_theta_d_W.flatten())
-            lambda_W = 0.001
-            if search_result is not None:
-                lambda_W = search_result[0]
+            # search_result = line_search(f=lambda w: self.theta(X, Y, L, w.reshape(W.shape[0], -1), V, B, alpha, beta, gamma),
+            #                        myfprime=lambda w: (2 * (X.transpose() @ (X @ w.reshape(W.shape[0], -1) - V) + gamma * D @ w.reshape(W.shape[0], -1))).flatten(),
+            #                        xk=W.flatten(),
+            #                        pk=d_theta_d_W.flatten())
+            # lambda_W = 1e-8
+            # if search_result[0] is not None:
+            #     lambda_W = search_result[0]
 
             # search lambda_B
-            search_result = line_search(f=lambda b: self.theta(X, Y, L, W, V, b, alpha, beta, gamma),
-                                   myfprime=lambda b: 2 * alpha * V.tranpose() @ (V @ b - Y),
-                                   xk=B,
-                                   pk=d_theta_d_B)
-
-            lambda_B = 0.001
-            if search_result is None:
-                lambda_B = search_result[0]
+            # search_result = line_search(f=lambda b: self.theta(X, Y, L, W, V, b.reshape(B.shape[0], -1), alpha, beta, gamma),
+            #                        myfprime=lambda b: (2 * alpha * V.transpose() @ (V @ b.reshape(B.shape[0], -1) - Y)).flatten(),
+            #                        xk=B.flatten(),
+            #                        pk=d_theta_d_B.flatten())
+            # lambda_B = 1e-8
+            # if search_result[0] is not None:
+            #     lambda_B = search_result[0]
 
             # search lambda_V
-            search_result = line_search(f=lambda v: self.theta(X, Y, L, W, v, B, alpha, beta, gamma),
-                                   myfprime=lambda v: 2 * ((v - X @ W) + alpha * (v @ B - Y) @ B.transpose() + beta * L @ v),
-                                   xk=V,
-                                   pk=d_theta_d_V)
-
-            lambda_V = 0.001
-            if search_result is None:
-                lambda_V = search_result[0]
+            # search_result = line_search(f=lambda v: self.theta(X, Y, L, W, v.reshape(V.shape[0], -1), B, alpha, beta, gamma),
+            #                        myfprime=lambda v: (2 * ((v.reshape(V.shape[0], -1) - X @ W) + alpha * (v.reshape(V.shape[0], -1) @ B - Y) @ B.transpose() + beta * L @ v.reshape(V.shape[0], -1))).flatten(),
+            #                        xk=V.flatten(),
+            #                        pk=d_theta_d_V.flatten())
+            # lambda_V = 1e-8
+            # if search_result[0] is not None:
+            #     lambda_V = search_result[0]
 
             # update W, V, and B
-            W = W - lambda_W * d_theta_d_W
-            V = V - lambda_V * d_theta_d_V
-            B = B - lambda_B * d_theta_d_B
+            W = W - lbd * d_theta_d_W
+            V = V - lbd * d_theta_d_V
+            B = B - lbd * d_theta_d_B
+
 
         # process the result
         self.W = W
@@ -140,3 +141,5 @@ class MIFS:
         self.feature_importance = pd.DataFrame(row_sum, index=self.features, columns=['importance'])
         # sort the score in descending order
         self.feature_importance = self.feature_importance.sort_values('importance', ascending=False)
+
+        pass

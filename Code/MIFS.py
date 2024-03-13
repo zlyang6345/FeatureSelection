@@ -48,7 +48,7 @@ class MIFS:
         return result
 
     @staticmethod
-    def armijo(loss, start, gradient, epochs=10):
+    def armijo(loss, start, gradient, epochs=10, alpha=1, gamma=0.1):
         """
         This function implements the Armijo rule.
 
@@ -58,9 +58,7 @@ class MIFS:
         :param epochs: The maximum number of iterations.
         :return: None or alpha.
         """
-        gamma = 0.1
-        c = 0.5
-        alpha = 1
+        c = 0.8
         d = -1 * gradient
         epoch = 0
         while (loss(start + alpha * d)
@@ -108,6 +106,9 @@ class MIFS:
         B = np.random.rand(c, self.k)
         X = self.data
         Y = self.label
+        lambda_Ws = list()
+        lambda_Vs = list()
+        lambda_Bs = list()
 
         thetas = list()
 
@@ -135,30 +136,33 @@ class MIFS:
             # search lambda_W
             search_result = MIFS.armijo(loss=lambda w: self.theta(X, Y, L, w, V, B),
                                         start=W,
-                                        gradient=d_theta_d_W)
+                                        gradient=d_theta_d_W,
+                                        gamma=0.1)
             if search_result is not None:
                 lambda_W = search_result
+                W = W - lambda_W * d_theta_d_W
+            lambda_Ws.append(search_result)
 
             # search lambda_B
             search_result = MIFS.armijo(loss=lambda b: self.theta(X, Y, L, W, V, b),
                                         start=B,
-                                        gradient=d_theta_d_B)
-
+                                        gradient=d_theta_d_B,
+                                        gamma=0.1)
+            lambda_Bs.append(search_result)
             if search_result is not None:
                 lambda_B = search_result
+                B = B - lambda_B * d_theta_d_B
 
             # search lambda_V
             search_result = MIFS.armijo(loss=lambda v: self.theta(X, Y, L, W, v, B),
                                         start=V,
-                                        gradient=d_theta_d_V)
+                                        gradient=d_theta_d_V,
+                                        gamma=0.5)
 
             if search_result is not None:
                 lambda_V = search_result
-
-            # update W, V, and B
-            W = W - lambda_W * d_theta_d_W
-            V = V - lambda_V * d_theta_d_V
-            B = B - lambda_B * d_theta_d_B
+                V = V - lambda_V * d_theta_d_V
+            lambda_Vs.append(search_result)
 
             thetas.append(self.theta(X, Y, L, W, V, B, alpha, beta, gamma))
 

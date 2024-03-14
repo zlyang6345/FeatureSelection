@@ -1,0 +1,2 @@
+1. Use Quasi-Newton method to improve the convergence speed of MIFS algorithm.
+    The algorithm now convergences much faster.

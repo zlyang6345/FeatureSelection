@@ -197,7 +197,7 @@ class MIFS:
     def quadratic_fit(self,
                       c,
                       sqrd_sigma=0.9,
-                      epoch=200,
+                      epoch=10,
                       epsilon=0.001,
                       alpha=0.4,
                       beta=1,
@@ -286,6 +286,27 @@ class MIFS:
             if res_B.success:
                 B = res_B.x.reshape(B.shape)
 
+            if (not res_B.success) and (not res_V.success) and (not res_W.success):
+                print(f'MIFS terminates at iteration: {i} since algorithm cannot descend further. ')
+                break
+
             thetas.append(self.theta(X, Y, L, W, V, B, alpha, beta, gamma))
 
+        # process the result
+        self.W = W
+        # calculate feature importance
+        row_sum = np.sum(np.abs(self.W * self.W), axis=1)
+        # convert to pandas dataframe
+        self.feature_importance = pd.DataFrame(row_sum, index=self.features, columns=['importance'])
+        # sort the score in descending order
+        self.feature_importance = self.feature_importance.sort_values('importance', ascending=False)
+
         return thetas
+
+    def k_features(self, k=None):
+
+        copy = self.feature_importance.copy()
+        if k is not None and k < copy.shape[0]:
+            return copy[0:k].index.tolist()
+        else:
+            return copy.index.tolist()

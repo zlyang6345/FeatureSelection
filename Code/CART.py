@@ -11,9 +11,11 @@ class CART:
     def fit(self):
         clf = DecisionTreeClassifier()
         clf.fit(self.data, self.label)
-        self.feature_importance = pd.DataFrame(clf.feature_importances_, index=self.data.columns,
+        self.feature_importance = pd.DataFrame(clf.feature_importances_,
+                                               index=self.data.columns,
                                                columns=['importance'])
-        self.feature_importance = self.feature_importance.sort_values('importance', ascending=False)
+        self.feature_importance = self.feature_importance.sort_values('importance',
+                                                                      ascending=False)
 
     def k_features(self, k=None):
 

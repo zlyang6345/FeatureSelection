@@ -295,7 +295,7 @@ class MIFS:
         # process the result
         self.W = W
         # calculate feature importance
-        row_sum = np.sum(np.abs(self.W * self.W), axis=1)
+        row_sum = np.sum(self.W * self.W, axis=1)
         # convert to pandas dataframe
         self.feature_importance = pd.DataFrame(row_sum, index=self.features, columns=['importance'])
         # sort the score in descending order

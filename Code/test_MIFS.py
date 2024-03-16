@@ -55,8 +55,8 @@ class TestMIFS(TestCase):
                                               epsilon=0.01,
                                               alpha=0.4,
                                               beta=1,
-                                              gamma=1.2,
-                                              p=5, )
+                                              gamma=0.8,
+                                              p=15, )
         print(mifs.feature_importance)
         print(time.time() - start_time)
         pass

@@ -8,8 +8,8 @@ class CART:
     target_labels = None
     feature_importance = pd.DataFrame()
 
-    def fit(self):
-        clf = DecisionTreeClassifier()
+    def fit(self, ccp_alpha):
+        clf = DecisionTreeClassifier(ccp_alpha=ccp_alpha)
         clf.fit(self.data, self.label)
         self.feature_importance = pd.DataFrame(clf.feature_importances_,
                                                index=self.data.columns,

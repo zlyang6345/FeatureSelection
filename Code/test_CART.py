@@ -8,13 +8,11 @@ class TestCART(TestCase):
         data = pd.read_csv('../Data/murine_spleen_protein_normalized.csv', header=0, index_col=0).astype(float)
         label = pd.read_csv('../Data/cite_cluster_labels.csv', index_col=0).astype(int)
 
-        fs = CART(data, label)
-        k_features = fs.k_features()
+        cart = CART(data, label)
+        cart.fit(ccp_alpha=0.1)
+
+        print(cart.feature_importance)
+
+        k_features = cart.k_features()
         assert k_features is not None
         assert len(k_features) == data.shape[1]
-
-    def test_effect(self):
-        data = pd.read_csv('../Data/murine_spleen_protein_normalized.csv', header=0, index_col=0).astype(float)
-        label = pd.read_csv('../Data/cite_cluster_labels.csv', index_col=0).astype(int)
-
-        # to implement

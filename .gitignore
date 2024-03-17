@@ -1,1 +1,4 @@
-/Data/cite_cluster_labels.csv
+/Data/
+/.idea
+/venv
+*DS_Store*

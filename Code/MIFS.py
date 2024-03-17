@@ -12,9 +12,8 @@ class MIFS:
 
         :param data: A pandas dataframe to represent data, # instances n * # classes d.
         :param label: A pandas dataframe to represent the label, # instances n * 1.
-        :param sqrd_sigma: A floating point to represent kernel width.
-        :param p: An integer to represent the number of nearest neighbors.
         """
+        self.feature_importance = None
         [self.n, self.d] = data.shape
         self.features = data.columns
         self.data = np.array(data)
@@ -205,7 +204,7 @@ class MIFS:
                       p=5, ):
         """
         This is a modified version of the original MIFS algorithm.
-        It employs a quasi-Newton method to do the gradient descent.
+        It employs a quasi-Newton method to improve the original algorithm.
 
         :param c: An integer to represent the dimension of latent space. 
         :param sqrd_sigma: A float to represent the kernel width. 

@@ -78,7 +78,7 @@ class MIFS:
             epsilon=0.01,
             p=5):
         """
-        Implement the MIFS algorithm, according to the paper.
+        Implement the Multi-Label Informed Feature Selection（MIFS） algorithm, according to the paper.
         https://www.ijcai.org/Proceedings/16/Papers/233.pdf
 
         :param c: An integer to represent the dimension of latent space.

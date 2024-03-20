@@ -43,7 +43,7 @@ class ERFS:
 
     def fit(self, gamma, epoch=15, non_zero=True, sigma=0.001):
         """
-        This function implements the Efficient and Robust Feature Selection (REFS) algorithm.
+        This function implements the Efficient and Robust Feature Selection (ERFS) algorithm.
 
         :param gamma: A number, see paper for more detail.
         :param epoch: An integer, the number of iterations.

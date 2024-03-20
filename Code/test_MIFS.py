@@ -48,28 +48,36 @@ class TestMIFS(TestCase):
         normalized_data = data.apply(min_max_normalize, axis=1)
         label = label.iloc[:num, :]
 
-        mifs = MIFS(normalized_data.copy(), label.copy())
-        quadratic_thetas = mifs.quadratic_fit(c=15,
-                                              sqrd_sigma=0.9,
-                                              epoch=10,
-                                              epsilon=0.01,
-                                              alpha=0.4,
-                                              beta=1,
-                                              gamma=0.8,
-                                              p=15, )
-        print(mifs.feature_importance)
-        print(time.time() - start_time)
-        pass
+        mifs1 = MIFS(normalized_data.copy(), label.copy())
+        quadratic_thetas = mifs1.quadratic_fit(c=15,
+                                               sqrd_sigma=0.9,
+                                               epoch=10,
+                                               epsilon=0.01,
+                                               alpha=0.4,
+                                               beta=1,
+                                               gamma=0.8,
+                                               p=5, )
+        # print(mifs.feature_importance)
+        # print(time.time() - start_time)
+        # pass
 
-        # mifs = MIFS(normalized_data.copy(), label.copy())
-        # regular_thetas = mifs.fit(c=None, epoch=10)
-        #
-        # fig, ax = plt.subplots(figsize=(8, 8))
-        # ax.plot(quadratic_thetas, label='Improved MIFS')
-        # ax.plot(regular_thetas, label='Original MIFS')
-        # ax.set_yscale('log')
-        # ax.legend()
-        # ax.set_xlabel('Epoch')
-        # ax.set_ylabel('Thetas (Loss, Logarithmic)')
-        # ax.set_title('Comparison between Modified and Original MIFS')
-        # plt.show()
+        mifs2 = MIFS(normalized_data.copy(), label.copy())
+        regular_thetas = mifs2.fit(c=15,
+                                   sqrd_sigma=0.9,
+                                   epoch=10,
+                                   epsilon=0.01,
+                                   alpha=0.4,
+                                   beta=1,
+                                   gamma=0.8,
+                                   p=5,
+                                   )
+
+        fig, ax = plt.subplots(figsize=(8, 8))
+        ax.plot(quadratic_thetas, label='Modified MIFS')
+        ax.plot(regular_thetas, label='Original MIFS')
+        ax.set_yscale('log')
+        ax.legend()
+        ax.set_xlabel('Epoch')
+        ax.set_ylabel('Thetas (Loss, Logarithmic)')
+        ax.set_title('Comparison between Modified and Original MIFS')
+        plt.show()

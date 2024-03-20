@@ -2,7 +2,7 @@ import numpy as np
 from scipy.spatial.distance import cdist
 from scipy.optimize import minimize
 import pandas as pd
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 class MIFS:
@@ -75,7 +75,7 @@ class MIFS:
             gamma=0.8,
             epoch=200,
             sqrd_sigma=0.9,
-            epsilon=0.001,
+            epsilon=0.01,
             p=5):
         """
         Implement the MIFS algorithm, according to the paper.
@@ -286,7 +286,7 @@ class MIFS:
                 B = res_B.x.reshape(B.shape)
 
             if (not res_B.success) and (not res_V.success) and (not res_W.success):
-                print(f'MIFS terminates at iteration: {i} since algorithm cannot descend further. ')
+                print(f'MIFS terminates at iteration: {i+1} since algorithm cannot descend further. ')
                 break
 
             thetas.append(self.theta(X, Y, L, W, V, B, alpha, beta, gamma))
@@ -305,6 +305,7 @@ class MIFS:
     def k_features(self, k=None):
 
         copy = self.feature_importance.copy()
+
         if k is not None and k < copy.shape[0]:
             return copy[0:k].index.tolist()
         else:
